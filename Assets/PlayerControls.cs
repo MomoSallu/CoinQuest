@@ -4,36 +4,25 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
 {
-    public int jumpStrength = 4;
-    public int forwardSpeed = 4;
-    public int rightSpeed = 4;
+    public float jumpStrength = 5f;
+    public float movementSpeed = 4f;
+    Rigidbody rb;   
     // Start is called before the first frame update
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey("space")) {
-            GetComponent<Rigidbody>().velocity = new Vector3( 0, jumpStrength, 0 );
-        }
-        if (Input.GetKey("w")) //forward
-        {
-            GetComponent<Rigidbody>().velocity = new Vector3(0, 0, forwardSpeed);
-        }
-        if (Input.GetKey("s")) //backward
-        {
-            GetComponent<Rigidbody>().velocity = new Vector3(0, 0, -(forwardSpeed));
-        }
-        if (Input.GetKey("a")) //left
-        {
-            GetComponent<Rigidbody>().velocity = new Vector3(-rightSpeed, 0, 0);
-        }
-        if (Input.GetKey("d")) //right
-        {
-            GetComponent<Rigidbody>().velocity = new Vector3(rightSpeed, 0, 0);
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
+        
+        if (Input.GetButtonDown("Jump")) { // refers to the Input Manager in Project Settings
+            rb.velocity = new Vector3( rb.velocity.x, jumpStrength, rb.velocity.y );
         }
     }
 }
