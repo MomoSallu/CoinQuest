@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEditor.Rendering;
+using UnityEditor.Timeline;
 using UnityEngine;
 
-public class PlayerControls : MonoBehaviour
-{
+public class PlayerControls : MonoBehaviour { 
     private Animator animator;
+    public Camera camTransform;
     public GameObject player;
     public float jumpStrength = 5f;
     public float fallMultipler = 2f;
@@ -15,11 +16,13 @@ public class PlayerControls : MonoBehaviour
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
     Rigidbody rb;
+    public float xRotate;
     // Start is called before the first frame update
     void Start()
     {
         rb = GetComponentInParent<Rigidbody>();
         animator = GetComponent<Animator>();
+        camTransform = GetComponent<Camera>();
     }
 
     // Update is called once per frame
@@ -31,13 +34,15 @@ public class PlayerControls : MonoBehaviour
         animator.SetFloat("moveX", horizontalInput);
         animator.SetFloat("moveY", verticalInput);
 
-        
-         // refers to the Input Manager in Project Settings
+        if (Input.GetKey(KeyCode.Mouse0)) 
+        {
+            Quaternion cameraRotation = Camera.main.transform.rotation;
+            transform.rotation = cameraRotation;
+        }
+
+        // refers to the Input Manager in Project Settings
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
-            //old jump code
-            //rb.velocity = new Vector3(rb.velocity.x, jumpStrength, rb.velocity.y);
-            //new jump code
             rb.AddForce(Vector3.up * jumpStrength, ForceMode.Impulse);
         }
         
@@ -52,11 +57,10 @@ public class PlayerControls : MonoBehaviour
             animator.SetBool("isFalling", false);
         }
     }
-
     private void FixedUpdate()
     {
          if (rb.velocity.y < 0) {
-            rb.velocity += Vector3.up * gravityMultiplierY * fallMultipler * Time.deltaTime;
+            rb.velocity += gravityMultiplierY * fallMultipler * Time.deltaTime * Vector3.up;
         }
     }
     bool IsGrounded() {
