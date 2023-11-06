@@ -16,7 +16,6 @@ public class PlayerControls : MonoBehaviour {
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
     Rigidbody rb;
-    public float xRotate;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,12 +28,13 @@ public class PlayerControls : MonoBehaviour {
     void Update()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float verticalInput = Input.GetAxis("Vertical");    
         rb.velocity = new Vector3(horizontalInput * movementSpeed, rb.velocity.y, verticalInput * movementSpeed);
         animator.SetFloat("moveX", horizontalInput);
         animator.SetFloat("moveY", verticalInput);
 
-        if (Input.GetKey(KeyCode.Mouse0)) 
+
+          if (Input.GetKey(KeyCode.Mouse0))
         {
             Quaternion cameraRotation = Camera.main.transform.rotation;
             transform.rotation = cameraRotation;
