@@ -7,8 +7,11 @@ using UnityEngine;
 public class PlayerControls : MonoBehaviour
 {
     private Animator animator;
+    public GameObject player;
     public float jumpStrength = 5f;
+    public float fallMultipler = 2f;
     public float movementSpeed = 4f;
+    public float gravityMultiplierY = Physics.gravity.y;
     [SerializeField] Transform groundCheck;
     [SerializeField] LayerMask groundLayer;
     Rigidbody rb;
@@ -28,10 +31,14 @@ public class PlayerControls : MonoBehaviour
         animator.SetFloat("moveX", horizontalInput);
         animator.SetFloat("moveY", verticalInput);
 
+        
          // refers to the Input Manager in Project Settings
         if (Input.GetButtonDown("Jump") && IsGrounded())
         {
-            rb.velocity = new Vector3(rb.velocity.x, jumpStrength, rb.velocity.y);
+            //old jump code
+            //rb.velocity = new Vector3(rb.velocity.x, jumpStrength, rb.velocity.y);
+            //new jump code
+            rb.AddForce(Vector3.up * jumpStrength, ForceMode.Impulse);
         }
         
         if (!IsGrounded() && rb.velocity.y > 0) {
@@ -43,6 +50,13 @@ public class PlayerControls : MonoBehaviour
             animator.SetBool("isFalling", true);
         } else {
             animator.SetBool("isFalling", false);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+         if (rb.velocity.y < 0) {
+            rb.velocity += Vector3.up * gravityMultiplierY * fallMultipler * Time.deltaTime;
         }
     }
     bool IsGrounded() {
